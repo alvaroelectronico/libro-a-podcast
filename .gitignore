@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+# Nunca subir credenciales de NotebookLM
+storage_state.json
+master_token.json

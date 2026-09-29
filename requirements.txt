@@ -1,0 +1,2 @@
+pypdf>=3.17
+notebooklm-py[browser]>=0.8.3
