@@ -5,7 +5,7 @@
                           [--format deep-dive|brief|critique|debate] [--only 3,4,7]
                           [--concurrency 2] [--no-download]
 
-Languages accepted: en, fr, pt-BR (pt_BR), it  (any NotebookLM code also works).
+Languages accepted: en, fr, pt-BR (pt_BR), it, es  (any NotebookLM code also works).
 
 Resumable: progress is stored in <outdir>/podcasts_state.json. Re-running skips
 finished sections and re-attaches to podcasts still being generated, so after a
@@ -33,7 +33,10 @@ LANGS = {
     "pt-br": ("pt_BR", "Brazilian Portuguese"),
     "pt_br": ("pt_BR", "Brazilian Portuguese"),
     "it": ("it", "Italian"),
+    "es": ("es", "Spanish"),
 }
+# Audio goes to <book folder>/podcasts/<folder>/
+AUDIO_FOLDERS = {"en": "ingles", "fr": "frances", "pt_BR": "portugues", "it": "italiano", "es": "espanol"}
 FORMATS = {"deep-dive": AudioFormat.DEEP_DIVE, "brief": AudioFormat.BRIEF,
            "critique": AudioFormat.CRITIQUE, "debate": AudioFormat.DEBATE}
 LENGTHS = {"short": AudioLength.SHORT, "default": AudioLength.DEFAULT, "long": AudioLength.LONG}
@@ -75,7 +78,9 @@ async def process(client, plan, sec, a, lang_code, lang_name, state: State, sem)
     pdf = outdir / sec["filename"]
     key = f"{sec['n']}|{lang_code}"
     st = state.get(key)
-    audio_path = pdf.with_name(f"{pdf.stem} ({lang_code}).m4a")
+    audio_dir = outdir.parent / "podcasts" / AUDIO_FOLDERS.get(lang_code, lang_code)
+    audio_dir.mkdir(parents=True, exist_ok=True)
+    audio_path = audio_dir / f"{pdf.stem} ({lang_code}).m4a"
     if st.get("status") == "done" and (a.no_download or audio_path.exists()):
         log(f"[{sec['n']}] ya hecho → {audio_path.name}")
         return "done"
@@ -129,7 +134,7 @@ async def process(client, plan, sec, a, lang_code, lang_name, state: State, sem)
                 st["status"] = "done"
                 await state.save()
 
-            # 5) Download next to the section PDF
+            # 5) Download into podcasts/<language>/
             if not a.no_download and not audio_path.exists():
                 await client.artifacts.download_audio(nb_id, str(audio_path), st["artifact_id"])
                 st["audio"] = str(audio_path)

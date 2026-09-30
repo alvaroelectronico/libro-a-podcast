@@ -6,7 +6,7 @@ Skill de Claude Code que convierte un libro en PDF en podcasts de NotebookLM (~1
 
 1. `scripts/split_book.py plan` lee los marcadores del PDF y propone secciones: los capítulos cortos se juntan hasta tener entre 7.000 y 16.000 palabras. Guarda el plan en `plan.json`.
 2. `scripts/split_book.py split` escribe un PDF por sección en `<carpeta del libro>/capitulos/`.
-3. `scripts/make_podcasts.py` crea un cuaderno de NotebookLM por sección, genera el Audio Overview en el idioma elegido y descarga `NN - Título (idioma).m4a` junto a su PDF. Si se interrumpe, al relanzarlo continúa donde lo dejó (`podcasts_state.json`).
+3. `scripts/make_podcasts.py` crea un cuaderno de NotebookLM por sección, genera el Audio Overview en el idioma elegido y descarga `NN - Título (idioma).m4a` en `podcasts/<idioma>/`. Si se interrumpe, al relanzarlo continúa donde lo dejó (`podcasts_state.json`).
 
 ## Instalación
 

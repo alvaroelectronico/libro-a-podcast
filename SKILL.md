@@ -5,7 +5,7 @@ description: Convierte un libro en PDF en podcasts de NotebookLM (~15 min) por c
 
 # Libro PDF → secciones → NotebookLM → podcasts
 
-Flujo: (1) ruta del PDF → (2) plan de secciones (capítulos, agrupando los cortos para que cada podcast tenga material suficiente) → (3) PDFs de sección en `<carpeta del PDF>/capitulos/` → (4) un cuaderno de NotebookLM por sección → (5) un podcast de ~15 min por cuaderno → (6) en el idioma elegido, descargado junto a su PDF como `NN - Título (fr).m4a`.
+Flujo: (1) ruta del PDF → (2) plan de secciones (capítulos, agrupando los cortos para que cada podcast tenga material suficiente) → (3) PDFs de sección en `<carpeta del PDF>/capitulos/` → (4) un cuaderno de NotebookLM por sección → (5) un podcast de ~15 min por cuaderno → (6) en el idioma elegido, descargado en `<carpeta del PDF>/podcasts/<idioma>/` como `NN - Título (fr).m4a`.
 
 Se ejecuta en el PC de Álvaro (Claude Code, Windows). NotebookLM (ahora "Gemini Notebook") no tiene API pública para cuentas personales; se usa la librería no oficial `notebooklm-py`, que puede romperse si Google cambia sus endpoints.
 
@@ -51,7 +51,7 @@ Escribe un PDF por sección en `capitulos/` (no sobrescribe los existentes salvo
 python "$S/make_podcasts.py" "<carpeta>/capitulos/plan.json" --lang fr
 ```
 
-Por cada sección: crea el cuaderno `"<Libro> — NN. <Título>"`, sube el PDF, lanza el Audio Overview en el idioma elegido con instrucciones de ~15 min centradas en esa sección, espera y descarga `NN - Título (fr).m4a` junto al PDF. Procesa 2 en paralelo (`--concurrency`). Cada podcast tarda unos 5-15 min en generarse, así que un libro entero puede llevar más de una hora: lánzalo en segundo plano (timeout largo) y consulta la salida periódicamente.
+Por cada sección: crea el cuaderno `"<Libro> — NN. <Título>"`, sube el PDF, lanza el Audio Overview en el idioma elegido con instrucciones de ~15 min centradas en esa sección, espera y descarga `NN - Título (fr).m4a` en `podcasts/<idioma>/` (espanol, frances, portugues, italiano, ingles). Procesa 2 en paralelo (`--concurrency`). Cada podcast tarda unos 5-15 min en generarse, así que un libro entero puede llevar más de una hora: lánzalo en segundo plano (timeout largo) y consulta la salida periódicamente.
 
 - El progreso queda en `capitulos/podcasts_state.json`. Si se para por **límite de uso** (NotebookLM repone el presupuesto cada ~5 h, con tope semanal), o por un error, basta con volver a ejecutar el mismo comando más tarde: continúa donde lo dejó y no duplica cuadernos. Ofrece programarlo si procede.
 - `--only 3,4` para rehacer secciones concretas (borra antes su entrada `"N|idioma"` del state si quieres regenerar el audio).
